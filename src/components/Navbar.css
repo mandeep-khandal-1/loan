@@ -1,21 +1,35 @@
 /* ===== Navbar ===== */
-.navbar {
+.navbar-wrapper {
   position: sticky;
-  top: 0;
+  top: var(--sp-4);
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--color-border-light);
-  height: var(--nav-height);
+  width: 100%;
   display: flex;
-  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Let clicks pass through empty sides */
+  margin-bottom: calc(var(--sp-4) * -1); /* Prevent extra space */
+}
+
+.navbar {
+  width: 100%;
+  max-width: var(--max-width);
+  padding: 0 var(--sp-6);
+  margin: 0 auto;
 }
 
 .navbar__inner {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  height: var(--nav-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 var(--sp-3) 0 var(--sp-6);
+  pointer-events: auto; /* Re-enable clicks inside the pill */
 }
 
 .navbar__brand {
@@ -129,16 +143,19 @@
 
   .navbar__right {
     position: fixed;
-    top: var(--nav-height);
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: calc(var(--nav-height) + var(--sp-6));
+    left: var(--sp-4);
+    right: var(--sp-4);
+    bottom: auto;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--color-border);
     background-color: var(--white);
     flex-direction: column;
     justify-content: flex-start;
     padding: var(--sp-6);
     gap: var(--sp-6);
-    transform: translateX(100%);
+    transform: translateY(-10px);
     opacity: 0;
     pointer-events: none;
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -146,7 +163,7 @@
   }
 
   .navbar__right--open {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
     pointer-events: all;
   }

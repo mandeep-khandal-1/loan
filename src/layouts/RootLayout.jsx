@@ -1,8 +1,9 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import TrustBar from '../components/TrustBar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ErrorBoundary from '../components/ErrorBoundary';
+import '../components/ErrorBoundary.css';
 
 function RootLayout() {
   const { pathname } = useLocation();
@@ -13,10 +14,12 @@ function RootLayout() {
 
   return (
     <>
-      <TrustBar />
+      <a href="#main-content" className="skip-nav">Skip to main content</a>
       <Navbar />
-      <main>
-        <Outlet />
+      <main id="main-content">
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <Footer />
     </>

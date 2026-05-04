@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { CreditCard, Building, GraduationCap, HeartPulse, PartyPopper, Home } from 'lucide-react';
+import ScrollReveal, { StaggerChildren } from './ScrollReveal';
 import './LoanProducts.css';
 
 const products = [
@@ -15,16 +16,18 @@ function LoanProducts() {
   return (
     <section className="products section section--warm" id="products">
       <div className="container">
-        <div className="section-header">
-          <span className="section-badge">Loan Products</span>
-          <h2 className="section-title">Find the Right Loan for You</h2>
-          <p className="section-subtitle">
-            We offer a wide range of loan products through our NBFC partners.
-            Competitive rates, flexible tenures.
-          </p>
-        </div>
+        <ScrollReveal direction="up" distance={50}>
+          <div className="section-header">
+            <span className="section-badge">Loan Products</span>
+            <h2 className="section-title">Find the Right Loan for You</h2>
+            <p className="section-subtitle">
+              We offer a wide range of loan products through our NBFC partners.
+              Competitive rates, flexible tenures.
+            </p>
+          </div>
+        </ScrollReveal>
 
-        <div className="products__grid">
+        <StaggerChildren stagger={0.08} direction="up" distance={40} className="products__grid">
           {products.map((p, i) => (
             <div className="products__card" key={i} id={`product-${i}`}>
               <div className="products__card-icon-wrap">
@@ -45,7 +48,7 @@ function LoanProducts() {
               <Link to={p.link} className="products__card-link">Learn More →</Link>
             </div>
           ))}
-        </div>
+        </StaggerChildren>
       </div>
     </section>
   );

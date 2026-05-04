@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import ScrollReveal, { StaggerChildren } from './ScrollReveal';
 import './Faq.css';
 
 const faqData = [
@@ -18,13 +19,15 @@ function Faq() {
   return (
     <section className="faq section" id="faq">
       <div className="container">
-        <div className="section-header">
-          <span className="section-badge">FAQs</span>
-          <h2 className="section-title">Got Questions? We've Got Answers</h2>
-          <p className="section-subtitle">Everything you need to know about our loan comparison service.</p>
-        </div>
+        <ScrollReveal direction="up" distance={50}>
+          <div className="section-header">
+            <span className="section-badge">FAQs</span>
+            <h2 className="section-title">Got Questions? We've Got Answers</h2>
+            <p className="section-subtitle">Everything you need to know about our loan comparison service.</p>
+          </div>
+        </ScrollReveal>
 
-        <div className="faq__list" id="faq-list">
+        <StaggerChildren stagger={0.08} direction="up" distance={30} className="faq__list" threshold={0.05}>
           {faqData.map((item, i) => (
             <div className={`faq__item ${openIndex === i ? 'faq__item--open' : ''}`} key={i} id={`faq-item-${i}`}>
               <button className="faq__question" onClick={() => toggle(i)} aria-expanded={openIndex === i}>
@@ -38,7 +41,7 @@ function Faq() {
               </div>
             </div>
           ))}
-        </div>
+        </StaggerChildren>
       </div>
     </section>
   );

@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Target, ShieldCheck, Users, Award, MapPin, ArrowRight } from 'lucide-react';
+import { COMPANY } from '../config/company';
+import SEO from '../components/SEO';
 import './InfoPage.css';
 
 function AboutPage() {
   return (
     <div className="info-page">
+      <SEO title="About Us" description={`Learn about ${COMPANY.name} — India's trusted loan comparison platform. ${COMPANY.stats.customers} customers served.`} />
+
       <section className="info-hero">
         <div className="container">
           <span className="section-badge">About Us</span>
@@ -34,7 +38,7 @@ function AboutPage() {
             <div className="info-card">
               <Award size={28} className="info-card__icon" />
               <h3>Track Record</h3>
-              <p>Over 2,00,000 customers served. ₹500 Cr+ facilitated in loans. Partnerships with 50+ leading NBFCs and banks across India.</p>
+              <p>Over {COMPANY.stats.customers} customers served. {COMPANY.stats.disbursed} facilitated in loans. Partnerships with {COMPANY.stats.partners} leading NBFCs and banks across India.</p>
             </div>
           </div>
 
@@ -43,18 +47,17 @@ function AboutPage() {
             <div className="info-address">
               <MapPin size={20} />
               <div>
-                <strong>[Your Company Name] Pvt. Ltd.</strong><br />
-                [Your Registered Address]<br />
-                Mumbai, Maharashtra - 400001<br />
-                CIN: [Your CIN Number]<br />
-                DSA Registration: [Your DSA Reg Number]
+                <strong>{COMPANY.legalName}</strong><br />
+                {COMPANY.address.full}<br />
+                CIN: {COMPANY.cin}<br />
+                DSA Registration: {COMPANY.dsaRegistration}
               </div>
             </div>
           </div>
 
           <div className="product-cta-block">
             <h3>Ready to find your best loan?</h3>
-            <p>Compare offers from 50+ lenders in 2 minutes.</p>
+            <p>Compare offers from {COMPANY.stats.partners} lenders in 2 minutes.</p>
             <Link to="/apply" className="btn btn--cta btn--lg">Apply Now <ArrowRight size={18} /></Link>
           </div>
         </div>

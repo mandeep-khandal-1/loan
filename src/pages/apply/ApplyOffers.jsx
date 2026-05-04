@@ -2,16 +2,25 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApplicationContext } from '../../context/ApplicationContext';
 import { ArrowLeft, CheckCircle, IndianRupee, Percent, Calendar, BadgeCheck } from 'lucide-react';
+import { calculateEMI, formatINR } from '../../utils/financial';
 import './ApplyFlow.css';
 
+/**
+ * Generate realistic loan offers based on user profile.
+ * Uses the correct EMI formula from shared utils.
+ */
 const generateOffers = (income, amount) => {
-  const inc = Number(income) || 50000;
   const amt = Number(amount) || 300000;
   return [
-    { id: 1, lender: 'Bajaj Finserv', rate: '10.49%', tenure: '36 months', emi: Math.round(amt / 36 * 1.18), fee: '1.5%', color: '#003B71' },
-    { id: 2, lender: 'Tata Capital', rate: '11.25%', tenure: '24 months', emi: Math.round(amt / 24 * 1.2), fee: '2.0%', color: '#00235B' },
-    { id: 3, lender: 'ICICI Bank', rate: '12.00%', tenure: '48 months', emi: Math.round(amt / 48 * 1.22), fee: '1.0%', color: '#B02A30' },
-  ];
+    { id: 1, lender: 'Bajaj Finserv', rate: 10.49, tenure: 36, fee: '1.5%', color: '#003B71' },
+    { id: 2, lender: 'Tata Capital', rate: 11.25, tenure: 24, fee: '2.0%', color: '#00235B' },
+    { id: 3, lender: 'ICICI Bank', rate: 12.00, tenure: 48, fee: '1.0%', color: '#B02A30' },
+  ].map((offer) => ({
+    ...offer,
+    emi: Math.round(calculateEMI(amt, offer.rate, offer.tenure)),
+    rateDisplay: `${offer.rate}%`,
+    tenureDisplay: `${offer.tenure} months`,
+  }));
 };
 
 function ApplyOffers() {
@@ -20,12 +29,10 @@ function ApplyOffers() {
   const [selected, setSelected] = useState(null);
   const offers = generateOffers(data.monthlyIncome, data.loanAmount);
 
-  const fmt = (v) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v);
-
   const handleProceed = () => {
     if (!selected) return;
     const ref = `SL${Date.now().toString().slice(-8)}`;
-    updateData({ selectedOffer: offers.find(o => o.id === selected), referenceId: ref });
+    updateData({ selectedOffer: offers.find((o) => o.id === selected), referenceId: ref });
     navigate('/apply/success');
   };
 
@@ -41,6 +48,7 @@ function ApplyOffers() {
             className={`offer-card ${selected === offer.id ? 'offer-card--selected' : ''}`}
             onClick={() => setSelected(offer.id)}
             type="button"
+            aria-pressed={selected === offer.id}
           >
             <div className="offer-card__header">
               <div className="offer-card__lender">
@@ -51,13 +59,13 @@ function ApplyOffers() {
             </div>
             <div className="offer-card__grid">
               <div className="offer-card__stat">
-                <Percent size={14} /><span>{offer.rate}</span><small>Interest Rate</small>
+                <Percent size={14} /><span>{offer.rateDisplay}</span><small>Interest Rate</small>
               </div>
               <div className="offer-card__stat">
-                <IndianRupee size={14} /><span>{fmt(offer.emi)}</span><small>Monthly EMI</small>
+                <IndianRupee size={14} /><span>{formatINR(offer.emi)}</span><small>Monthly EMI</small>
               </div>
               <div className="offer-card__stat">
-                <Calendar size={14} /><span>{offer.tenure}</span><small>Tenure</small>
+                <Calendar size={14} /><span>{offer.tenureDisplay}</span><small>Tenure</small>
               </div>
               <div className="offer-card__stat">
                 <BadgeCheck size={14} /><span>{offer.fee}</span><small>Processing Fee</small>

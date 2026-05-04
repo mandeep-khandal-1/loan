@@ -1,4 +1,8 @@
 /* ===== Loan Products ===== */
+.products {
+  position: relative;
+  z-index: 10;
+}
 .products__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

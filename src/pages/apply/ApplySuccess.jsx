@@ -1,31 +1,34 @@
 import { Link } from 'react-router-dom';
 import { useApplicationContext } from '../../context/ApplicationContext';
 import { CheckCircle, Copy, Home, Calculator } from 'lucide-react';
-import './ApplyFlow.css';
+import { copyToClipboard } from '../../utils/clipboard';
 import { useState } from 'react';
+import './ApplyFlow.css';
 
 function ApplySuccess() {
   const { data, resetData } = useApplicationContext();
   const [copied, setCopied] = useState(false);
 
-  const copyRef = () => {
-    navigator.clipboard.writeText(data.referenceId || '');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyRef = async () => {
+    const success = await copyToClipboard(data.referenceId || '');
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
-    <div className="apply-form" style={{ textAlign: 'center' }}>
+    <div className="apply-form apply-form--center">
       <div className="success-icon-wrap">
         <CheckCircle size={48} />
       </div>
 
-      <h2 className="apply-form__title" style={{ color: 'var(--green-900)' }}>Application Submitted!</h2>
+      <h2 className="apply-form__title apply-form__title--success">Application Submitted!</h2>
       <p className="apply-form__desc">
         Thank you, <strong>{data.fullName || 'applicant'}</strong>. Your application has been forwarded to <strong>{data.selectedOffer?.lender || 'the lender'}</strong>.
       </p>
 
-      <div className="success-ref" onClick={copyRef} title="Click to copy">
+      <div className="success-ref" onClick={copyRef} onKeyDown={(e) => e.key === 'Enter' && copyRef()} role="button" tabIndex={0} title="Click to copy">
         <span>Reference ID</span>
         <strong>{data.referenceId || 'SL00000000'}</strong>
         <Copy size={14} />
@@ -39,7 +42,7 @@ function ApplySuccess() {
         <div className="success-step"><span className="success-step__num">3</span><p>Upon approval, funds will be disbursed to your bank account within <strong>2-24 hours</strong>.</p></div>
       </div>
 
-      <div style={{ display: 'flex', gap: 'var(--sp-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div className="success-actions">
         <Link to="/" className="btn btn--cta btn--lg" onClick={resetData}><Home size={18} /> Back to Home</Link>
         <Link to="/emi-calculator" className="btn btn--outline btn--lg"><Calculator size={18} /> EMI Calculator</Link>
       </div>

@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, FileText, ShieldCheck, Users, IndianRupee, Building2, Star } from 'lucide-react';
+import { formatINR } from '../utils/financial';
+import { COMPANY } from '../config/company';
 import './Hero.css';
 
 function Hero() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     mobile: '',
     loanAmount: '200000',
-    employment: '',
+    employmentType: '',
   });
   const [errors, setErrors] = useState({});
 
@@ -20,9 +22,9 @@ function Hero() {
 
   const validate = () => {
     const errs = {};
-    if (!formData.name.trim()) errs.name = 'Full name is required';
+    if (!formData.fullName.trim()) errs.fullName = 'Full name is required';
     if (!/^[6-9]\d{9}$/.test(formData.mobile)) errs.mobile = 'Enter valid 10-digit mobile';
-    if (!formData.employment) errs.employment = 'Select your employment type';
+    if (!formData.employmentType) errs.employmentType = 'Select your employment type';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -30,21 +32,18 @@ function Hero() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      // Store initial lead data and navigate to full application
-      try {
-        sessionStorage.setItem('sabkaloan_application', JSON.stringify({
-          fullName: formData.name,
+      // Navigate to apply — the apply form will collect this data fresh
+      // We pass minimal non-sensitive data via URL state (NOT sessionStorage)
+      navigate('/apply', {
+        state: {
+          fullName: formData.fullName,
           mobile: formData.mobile,
           loanAmount: formData.loanAmount,
-          employmentType: formData.employment,
-        }));
-      } catch { /* ignore */ }
-      navigate('/apply');
+          employmentType: formData.employmentType,
+        },
+      });
     }
   };
-
-  const formatAmount = (val) =>
-    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(val);
 
   return (
     <section className="hero" id="hero">
@@ -52,7 +51,7 @@ function Hero() {
         <div className="hero__content">
           <div className="hero__eyebrow">
             <span className="hero__eyebrow-dot" />
-            Trusted by 2,00,000+ Indians
+            Trusted by {COMPANY.stats.customers} Indians
           </div>
 
           <h1 className="hero__title">
@@ -61,7 +60,7 @@ function Hero() {
           </h1>
 
           <p className="hero__subtitle">
-            We compare offers from 50+ RBI-registered NBFCs to find you the
+            We compare offers from {COMPANY.stats.partners} RBI-registered NBFCs to find you the
             lowest rates. 100% digital. Approval in minutes. Funds same day.
           </p>
 
@@ -82,26 +81,26 @@ function Hero() {
 
           <div className="hero__stats">
             <div className="hero__stat">
-              <span className="hero__stat-val"><Users size={18} /> 2L+</span>
+              <span className="hero__stat-val"><Users size={18} /> {COMPANY.stats.customersShort}</span>
               <span className="hero__stat-label">Customers</span>
             </div>
             <div className="hero__stat">
-              <span className="hero__stat-val"><IndianRupee size={18} /> 500Cr+</span>
+              <span className="hero__stat-val"><IndianRupee size={18} /> {COMPANY.stats.disbursed.replace('₹', '')}</span>
               <span className="hero__stat-label">Disbursed</span>
             </div>
             <div className="hero__stat">
-              <span className="hero__stat-val"><Building2 size={18} /> 50+</span>
+              <span className="hero__stat-val"><Building2 size={18} /> {COMPANY.stats.partners}</span>
               <span className="hero__stat-label">NBFC Partners</span>
             </div>
             <div className="hero__stat">
-              <span className="hero__stat-val"><Star size={18} /> 4.5</span>
+              <span className="hero__stat-val"><Star size={18} /> {COMPANY.stats.rating}</span>
               <span className="hero__stat-label">User Rating</span>
             </div>
           </div>
         </div>
 
         <div className="hero__form-wrap" id="hero-form">
-          <form className="hero__form" onSubmit={handleSubmit} id="lead-form">
+          <form className="hero__form" onSubmit={handleSubmit} id="lead-form" noValidate>
             <h2 className="hero__form-title">Check Your Eligibility</h2>
             <p className="hero__form-desc">Get personalized loan offers in 2 minutes</p>
 
@@ -110,12 +109,13 @@ function Hero() {
               <input
                 id="lead-name"
                 type="text"
-                className={`form-input ${errors.name ? 'form-input--error' : ''}`}
+                className={`form-input ${errors.fullName ? 'form-input--error' : ''}`}
                 placeholder="Enter your full name"
-                value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
+                value={formData.fullName}
+                onChange={(e) => handleChange('fullName', e.target.value)}
+                autoComplete="name"
               />
-              {errors.name && <span className="form-error">{errors.name}</span>}
+              {errors.fullName && <span className="form-error" role="alert">{errors.fullName}</span>}
             </div>
 
             <div className="form-group">
@@ -128,13 +128,14 @@ function Hero() {
                 maxLength={10}
                 value={formData.mobile}
                 onChange={(e) => handleChange('mobile', e.target.value.replace(/\D/g, ''))}
+                autoComplete="tel"
               />
-              {errors.mobile && <span className="form-error">{errors.mobile}</span>}
+              {errors.mobile && <span className="form-error" role="alert">{errors.mobile}</span>}
             </div>
 
             <div className="form-group">
               <label htmlFor="lead-amount" className="form-label">
-                Loan Amount: <strong>{formatAmount(formData.loanAmount)}</strong>
+                Loan Amount: <strong>{formatINR(formData.loanAmount)}</strong>
               </label>
               <input
                 id="lead-amount"
@@ -153,20 +154,27 @@ function Hero() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="lead-employment" className="form-label">Employment Type</label>
-              <select
-                id="lead-employment"
-                className={`form-select ${errors.employment ? 'form-input--error' : ''}`}
-                value={formData.employment}
-                onChange={(e) => handleChange('employment', e.target.value)}
-              >
-                <option value="">Select type</option>
-                <option value="salaried">Salaried</option>
-                <option value="self-employed">Self-Employed</option>
-                <option value="business">Business Owner</option>
-                <option value="freelancer">Freelancer</option>
-              </select>
-              {errors.employment && <span className="form-error">{errors.employment}</span>}
+              <span className="form-label">Employment Type</span>
+              <div className={`hero__emp-grid ${errors.employmentType ? 'hero__emp-grid--error' : ''}`}>
+                {[
+                  { value: 'salaried', label: 'Salaried', icon: '💼' },
+                  { value: 'self-employed', label: 'Self-Employed', icon: '🏢' },
+                  { value: 'business', label: 'Business', icon: '📊' },
+                  { value: 'freelancer', label: 'Freelancer', icon: '💻' },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`hero__emp-card ${formData.employmentType === opt.value ? 'hero__emp-card--active' : ''}`}
+                    onClick={() => handleChange('employmentType', opt.value)}
+                    aria-pressed={formData.employmentType === opt.value}
+                  >
+                    <span className="hero__emp-icon">{opt.icon}</span>
+                    <span className="hero__emp-label">{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+              {errors.employmentType && <span className="form-error" role="alert">{errors.employmentType}</span>}
             </div>
 
             <button type="submit" className="btn btn--cta btn--lg btn--full" id="lead-submit">

@@ -1,8 +1,12 @@
+import { COMPANY } from '../config/company';
+import SEO from '../components/SEO';
 import './InfoPage.css';
 
 function PrivacyPolicyPage() {
   return (
     <div className="info-page">
+      <SEO title="Privacy Policy" description={`Privacy Policy for ${COMPANY.name}. Learn how we collect, use, and protect your personal data.`} />
+
       <section className="info-hero">
         <div className="container">
           <span className="section-badge">Legal</span>
@@ -13,7 +17,7 @@ function PrivacyPolicyPage() {
       <section className="section">
         <div className="container legal-content">
           <h2>1. Information We Collect</h2>
-          <p>When you use SabkaLoan, we collect the following categories of personal information:</p>
+          <p>When you use {COMPANY.name}, we collect the following categories of personal information:</p>
           <ul>
             <li><strong>Identity Data:</strong> Full name, date of birth, PAN number, Aadhaar number (for eKYC).</li>
             <li><strong>Contact Data:</strong> Email address, mobile number, residential address.</li>
@@ -48,13 +52,13 @@ function PrivacyPolicyPage() {
             <li>Erase your data (subject to legal retention requirements)</li>
             <li>Withdraw consent at any time</li>
           </ul>
-          <p>To exercise these rights, contact our Data Protection Officer at <strong>dpo@sabkaloan.com</strong>.</p>
+          <p>To exercise these rights, contact our Data Protection Officer at <strong>{COMPANY.dpoEmail}</strong>.</p>
 
           <h2>7. Cookies</h2>
           <p>We use essential and analytics cookies to improve your experience. You can manage cookie preferences through your browser settings.</p>
 
           <h2>8. Contact Us</h2>
-          <p>For privacy-related queries, contact:<br /><strong>Data Protection Officer</strong><br />Email: dpo@sabkaloan.com<br />Phone: 1800-123-456</p>
+          <p>For privacy-related queries, contact:<br /><strong>Data Protection Officer</strong><br />Email: {COMPANY.dpoEmail}<br />Phone: {COMPANY.phone}</p>
         </div>
       </section>
     </div>

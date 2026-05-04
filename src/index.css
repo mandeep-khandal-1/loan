@@ -167,6 +167,8 @@ button {
 /* ===== Utility: Section ===== */
 .section {
   padding: var(--sp-20) 0;
+  position: relative;
+  z-index: 10;
 }
 
 .section--warm {
@@ -378,4 +380,90 @@ button {
   background-color: var(--green-200);
   color: var(--green-950);
 }
+
+/* ===== Skip Navigation (a11y) ===== */
+.skip-nav {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+  padding: var(--sp-3) var(--sp-6);
+  background-color: var(--green-900);
+  color: var(--white);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  border-radius: 0 0 var(--radius-md) 0;
+}
+
+.skip-nav:focus {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+/* ===== Page Loader (Suspense fallback) ===== */
+.page-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: var(--sp-4);
+  color: var(--color-text-muted);
+}
+
+.page-loader__spinner {
+  animation: spin 1s linear infinite;
+  color: var(--emerald-500);
+}
+
+.page-loader__text {
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== Button Spinner ===== */
+.btn-spinner {
+  animation: spin 1s linear infinite;
+}
+
+
+
+/* ===== Contact / Grievance Form Spacing ===== */
+.contact-form__group { margin-bottom: var(--sp-4); }
+.contact-form__group--last { margin-bottom: var(--sp-6); }
+.grievance-form__group { margin-bottom: var(--sp-4); }
+.grievance-form__group--last { margin-bottom: var(--sp-6); }
+.grievance-officer-card { margin-bottom: var(--sp-6); }
+
+/* ===== Contact Success ===== */
+.contact-success { text-align: center; padding: var(--sp-10); }
+.contact-success__icon { margin-bottom: var(--sp-4); color: var(--emerald-500); }
+.contact-success h3 { margin-bottom: var(--sp-2); }
+.contact-success p { color: var(--color-text-secondary); }
+
+/* ===== Success Actions (Apply) ===== */
+.success-actions {
+  display: flex;
+  gap: var(--sp-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.apply-form--center { text-align: center; }
+.apply-form__title--success { color: var(--green-900); }
+
+/* ===== OTP Error Message ===== */
+.otp-error-msg { text-align: center; }
 

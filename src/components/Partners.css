@@ -1,59 +1,91 @@
-/* ===== Partners ===== */
+/* ===== Partners — 2-Row Opposite Scroll ===== */
 .partners {
-  padding: var(--sp-10) 0;
-  border-bottom: 1px solid var(--color-border-light);
-  background-color: var(--gray-50);
+  position: relative;
+  z-index: 10;
+  padding: var(--sp-12) 0;
+  background-color: var(--white);
   overflow: hidden;
 }
 
-.partners__label {
+.partners__title {
+  text-align: center;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--sp-2);
+}
+
+.partners__subtitle {
   text-align: center;
   font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: var(--sp-6);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--sp-8);
 }
 
 .partners__track {
   overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  margin-bottom: var(--sp-4);
 }
 
 .partners__list {
   display: flex;
-  gap: var(--sp-8);
-  animation: marquee 30s linear infinite;
+  gap: var(--sp-5);
   width: max-content;
+  will-change: transform;
 }
 
-@keyframes marquee {
+/* Row 1 → scrolls LEFT */
+.partners__list--left {
+  animation: partners-left 35s linear infinite;
+}
+
+/* Row 2 → scrolls RIGHT */
+.partners__list--right {
+  animation: partners-right 35s linear infinite;
+}
+
+.partners__list:hover {
+  animation-play-state: paused;
+}
+
+@keyframes partners-left {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+@keyframes partners-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
 
 .partners__item {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-5);
+  padding: var(--sp-4) var(--sp-6);
   background-color: var(--white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   flex-shrink: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.partners__item:hover {
+  border-color: var(--green-300);
+  box-shadow: var(--shadow-md);
 }
 
 .partners__mark {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-heading);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--white);
   letter-spacing: 0.02em;
@@ -64,6 +96,13 @@
   font-family: var(--font-heading);
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--gray-600);
+  color: var(--gray-700);
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .partners { padding: var(--sp-8) 0; }
+  .partners__title { font-size: var(--text-xl); }
+  .partners__item { padding: var(--sp-3) var(--sp-4); }
+  .partners__mark { width: 30px; height: 30px; font-size: 10px; }
 }

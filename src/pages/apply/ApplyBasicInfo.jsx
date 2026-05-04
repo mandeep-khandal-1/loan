@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApplicationContext } from '../../context/ApplicationContext';
 import './ApplyFlow.css';
 
@@ -15,57 +15,66 @@ const schema = z.object({
 
 function ApplyBasicInfo() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { data, updateData } = useApplicationContext();
+
+  // Pre-fill from Hero form's navigation state (if available) or existing context
+  const heroData = location.state || {};
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      fullName: data.fullName || '',
+      fullName: data.fullName || heroData.fullName || '',
       email: data.email || '',
-      mobile: data.mobile || '',
+      mobile: data.mobile || heroData.mobile || '',
       dob: data.dob || '',
       pan: data.pan || '',
     },
   });
 
   const onSubmit = (values) => {
-    updateData(values);
+    // Also carry over hero data (loanAmount, employmentType) if present
+    updateData({
+      ...values,
+      ...(heroData.loanAmount ? { loanAmount: heroData.loanAmount } : {}),
+      ...(heroData.employmentType ? { employmentType: heroData.employmentType } : {}),
+    });
     navigate('/apply/employment');
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="apply-form">
+    <form onSubmit={handleSubmit(onSubmit)} className="apply-form" noValidate>
       <h2 className="apply-form__title">Personal Information</h2>
       <p className="apply-form__desc">Tell us about yourself. This helps us match you with the right lender.</p>
 
       <div className="form-group">
-        <label className="form-label">Full Name (as per PAN)</label>
-        <input {...register('fullName')} className={`form-input ${errors.fullName ? 'form-input--error' : ''}`} placeholder="Enter your full name" />
-        {errors.fullName && <span className="form-error">{errors.fullName.message}</span>}
+        <label htmlFor="apply-fullName" className="form-label">Full Name (as per PAN)</label>
+        <input {...register('fullName')} id="apply-fullName" className={`form-input ${errors.fullName ? 'form-input--error' : ''}`} placeholder="Enter your full name" autoComplete="name" />
+        {errors.fullName && <span className="form-error" role="alert">{errors.fullName.message}</span>}
       </div>
 
       <div className="form-group">
-        <label className="form-label">Email Address</label>
-        <input {...register('email')} type="email" className={`form-input ${errors.email ? 'form-input--error' : ''}`} placeholder="your@email.com" />
-        {errors.email && <span className="form-error">{errors.email.message}</span>}
+        <label htmlFor="apply-email" className="form-label">Email Address</label>
+        <input {...register('email')} id="apply-email" type="email" className={`form-input ${errors.email ? 'form-input--error' : ''}`} placeholder="your@email.com" autoComplete="email" />
+        {errors.email && <span className="form-error" role="alert">{errors.email.message}</span>}
       </div>
 
       <div className="form-group">
-        <label className="form-label">Mobile Number</label>
-        <input {...register('mobile')} type="tel" maxLength={10} className={`form-input ${errors.mobile ? 'form-input--error' : ''}`} placeholder="10-digit mobile number" />
-        {errors.mobile && <span className="form-error">{errors.mobile.message}</span>}
+        <label htmlFor="apply-mobile" className="form-label">Mobile Number</label>
+        <input {...register('mobile')} id="apply-mobile" type="tel" maxLength={10} className={`form-input ${errors.mobile ? 'form-input--error' : ''}`} placeholder="10-digit mobile number" autoComplete="tel" />
+        {errors.mobile && <span className="form-error" role="alert">{errors.mobile.message}</span>}
       </div>
 
       <div className="form-group">
-        <label className="form-label">Date of Birth</label>
-        <input {...register('dob')} type="date" className={`form-input ${errors.dob ? 'form-input--error' : ''}`} />
-        {errors.dob && <span className="form-error">{errors.dob.message}</span>}
+        <label htmlFor="apply-dob" className="form-label">Date of Birth</label>
+        <input {...register('dob')} id="apply-dob" type="date" className={`form-input ${errors.dob ? 'form-input--error' : ''}`} autoComplete="bday" />
+        {errors.dob && <span className="form-error" role="alert">{errors.dob.message}</span>}
       </div>
 
       <div className="form-group">
-        <label className="form-label">PAN Number</label>
-        <input {...register('pan')} className={`form-input ${errors.pan ? 'form-input--error' : ''}`} placeholder="ABCDE1234F" maxLength={10} style={{ textTransform: 'uppercase' }} />
-        {errors.pan && <span className="form-error">{errors.pan.message}</span>}
+        <label htmlFor="apply-pan" className="form-label">PAN Number</label>
+        <input {...register('pan')} id="apply-pan" className={`form-input ${errors.pan ? 'form-input--error' : ''}`} placeholder="ABCDE1234F" maxLength={10} style={{ textTransform: 'uppercase' }} autoComplete="off" />
+        {errors.pan && <span className="form-error" role="alert">{errors.pan.message}</span>}
         <span className="form-hint">Your PAN is used solely for identity verification.</span>
       </div>
 

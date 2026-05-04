@@ -1,17 +1,38 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle } from 'lucide-react';
+import { COMPANY } from '../config/company';
+import { useToast } from '../components/Toast';
+import SEO from '../components/SEO';
 import './InfoPage.css';
+
+const schema = z.object({
+  name: z.string().min(2, 'Name is required'),
+  email: z.string().email('Enter a valid email'),
+  subject: z.string().min(1, 'Select a topic'),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
+});
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const toast = useToast();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { name: '', email: '', subject: '', message: '' },
+  });
+
+  const onSubmit = () => {
     setSent(true);
+    toast('Message sent! Our team will get back to you within 24 hours.', 'success');
   };
 
   return (
     <div className="info-page">
+      <SEO title="Contact Us" description={`Get in touch with ${COMPANY.name}. Email: ${COMPANY.email}. Toll-free: ${COMPANY.phone}.`} />
+
       <section className="info-hero">
         <div className="container">
           <span className="section-badge">Contact Us</span>
@@ -26,19 +47,19 @@ function ContactPage() {
             <div className="contact-info-list">
               <div className="contact-info-item">
                 <Mail size={20} />
-                <div><strong>Email</strong><span>support@sabkaloan.com</span></div>
+                <div><strong>Email</strong><span>{COMPANY.email}</span></div>
               </div>
               <div className="contact-info-item">
                 <Phone size={20} />
-                <div><strong>Toll Free</strong><span>1800-123-456 (Mon-Sat, 9am-7pm)</span></div>
+                <div><strong>Toll Free</strong><span>{COMPANY.phone} (Mon-Sat, 9am-7pm)</span></div>
               </div>
               <div className="contact-info-item">
                 <MapPin size={20} />
-                <div><strong>Office</strong><span>[Your Company Address], Mumbai, Maharashtra 400001</span></div>
+                <div><strong>Office</strong><span>{COMPANY.address.full}</span></div>
               </div>
               <div className="contact-info-item">
                 <Clock size={20} />
-                <div><strong>Working Hours</strong><span>Monday - Saturday, 9:00 AM - 7:00 PM IST</span></div>
+                <div><strong>Working Hours</strong><span>{COMPANY.workingHours}</span></div>
               </div>
             </div>
 
@@ -46,38 +67,42 @@ function ContactPage() {
               {!sent ? (
                 <>
                   <h3>Send us a message</h3>
-                  <form onSubmit={handleSubmit}>
-                    <div className="form-group" style={{ marginBottom: 'var(--sp-4)' }}>
+                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <div className="form-group contact-form__group">
                       <label className="form-label">Full Name</label>
-                      <input className="form-input" placeholder="Enter your name" required />
+                      <input {...register('name')} className={`form-input ${errors.name ? 'form-input--error' : ''}`} placeholder="Enter your name" />
+                      {errors.name && <span className="form-error" role="alert">{errors.name.message}</span>}
                     </div>
-                    <div className="form-group" style={{ marginBottom: 'var(--sp-4)' }}>
+                    <div className="form-group contact-form__group">
                       <label className="form-label">Email</label>
-                      <input className="form-input" type="email" placeholder="your@email.com" required />
+                      <input {...register('email')} type="email" className={`form-input ${errors.email ? 'form-input--error' : ''}`} placeholder="your@email.com" />
+                      {errors.email && <span className="form-error" role="alert">{errors.email.message}</span>}
                     </div>
-                    <div className="form-group" style={{ marginBottom: 'var(--sp-4)' }}>
+                    <div className="form-group contact-form__group">
                       <label className="form-label">Subject</label>
-                      <select className="form-select" required>
+                      <select {...register('subject')} className={`form-select ${errors.subject ? 'form-input--error' : ''}`}>
                         <option value="">Select topic</option>
-                        <option>Loan Query</option>
-                        <option>Application Status</option>
-                        <option>NBFC Partnership</option>
-                        <option>Grievance</option>
-                        <option>Other</option>
+                        <option value="loan-query">Loan Query</option>
+                        <option value="app-status">Application Status</option>
+                        <option value="partnership">NBFC Partnership</option>
+                        <option value="grievance">Grievance</option>
+                        <option value="other">Other</option>
                       </select>
+                      {errors.subject && <span className="form-error" role="alert">{errors.subject.message}</span>}
                     </div>
-                    <div className="form-group" style={{ marginBottom: 'var(--sp-6)' }}>
+                    <div className="form-group contact-form__group--last">
                       <label className="form-label">Message</label>
-                      <textarea className="form-input" rows={4} placeholder="Describe your query..." required style={{ resize: 'vertical' }} />
+                      <textarea {...register('message')} className={`form-input ${errors.message ? 'form-input--error' : ''}`} rows={4} placeholder="Describe your query..." style={{ resize: 'vertical' }} />
+                      {errors.message && <span className="form-error" role="alert">{errors.message.message}</span>}
                     </div>
                     <button type="submit" className="btn btn--cta btn--lg btn--full">Send Message <ArrowRight size={18} /></button>
                   </form>
                 </>
               ) : (
-                <div style={{ textAlign: 'center', padding: 'var(--sp-10)' }}>
-                  <div style={{ marginBottom: 'var(--sp-4)', color: 'var(--emerald-500)' }}><CheckCircle size={48} /></div>
-                  <h3 style={{ marginBottom: 'var(--sp-2)' }}>Message Sent!</h3>
-                  <p style={{ color: 'var(--color-text-secondary)' }}>Our team will get back to you within 24 hours.</p>
+                <div className="contact-success">
+                  <div className="contact-success__icon"><CheckCircle size={48} /></div>
+                  <h3>Message Sent!</h3>
+                  <p>Our team will get back to you within 24 hours.</p>
                 </div>
               )}
             </div>

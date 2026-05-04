@@ -24,31 +24,23 @@ const INITIAL_DATA = {
   referenceId: '',
 };
 
+/**
+ * SECURITY NOTE: Sensitive data (PAN, mobile, personal info) is stored ONLY
+ * in React state (in-memory). We do NOT persist to sessionStorage/localStorage.
+ * This is compliant with RBI and DPDP Act 2023 guidelines for client-side handling.
+ *
+ * In a production environment, sensitive fields should be sent directly to the
+ * backend via HTTPS and never cached on the client.
+ */
 export function ApplicationProvider({ children }) {
-  const [data, setData] = useState(() => {
-    try {
-      const saved = sessionStorage.getItem('sabkaloan_application');
-      return saved ? { ...INITIAL_DATA, ...JSON.parse(saved) } : INITIAL_DATA;
-    } catch {
-      return INITIAL_DATA;
-    }
-  });
+  const [data, setData] = useState(INITIAL_DATA);
 
   const updateData = useCallback((updates) => {
-    setData((prev) => {
-      const next = { ...prev, ...updates };
-      try {
-        sessionStorage.setItem('sabkaloan_application', JSON.stringify(next));
-      } catch { /* ignore */ }
-      return next;
-    });
+    setData((prev) => ({ ...prev, ...updates }));
   }, []);
 
   const resetData = useCallback(() => {
     setData(INITIAL_DATA);
-    try {
-      sessionStorage.removeItem('sabkaloan_application');
-    } catch { /* ignore */ }
   }, []);
 
   return (

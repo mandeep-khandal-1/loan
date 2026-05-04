@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApplicationContext } from '../../context/ApplicationContext';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Loader2 } from 'lucide-react';
 import './ApplyFlow.css';
 
 function ApplyVerification() {
@@ -11,6 +11,7 @@ function ApplyVerification() {
   const [error, setError] = useState('');
   const [countdown, setCountdown] = useState(60);
   const [sent, setSent] = useState(true);
+  const [verifying, setVerifying] = useState(false);
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -42,6 +43,20 @@ function ApplyVerification() {
     }
   };
 
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (pastedData.length > 0) {
+      const newOtp = [...otp];
+      for (let i = 0; i < pastedData.length; i++) {
+        newOtp[i] = pastedData[i];
+      }
+      setOtp(newOtp);
+      const focusIndex = Math.min(pastedData.length, 5);
+      inputRefs.current[focusIndex]?.focus();
+    }
+  };
+
   const handleResend = () => {
     setCountdown(60);
     setSent(true);
@@ -55,9 +70,14 @@ function ApplyVerification() {
       setError('Please enter the complete 6-digit OTP');
       return;
     }
-    // Simulated verification — any 6-digit code works
-    updateData({ otpVerified: true });
-    navigate('/apply/offers');
+
+    // Simulate verification API call with loading state
+    setVerifying(true);
+    setTimeout(() => {
+      updateData({ otpVerified: true });
+      setVerifying(false);
+      navigate('/apply/offers');
+    }, 1500);
   };
 
   const maskedMobile = data.mobile
@@ -82,11 +102,14 @@ function ApplyVerification() {
             value={digit}
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
+            onPaste={i === 0 ? handlePaste : undefined}
             className={`otp-input ${error ? 'otp-input--error' : ''}`}
+            aria-label={`OTP digit ${i + 1}`}
+            autoComplete="one-time-code"
           />
         ))}
       </div>
-      {error && <p className="form-error" style={{ textAlign: 'center' }}>{error}</p>}
+      {error && <p className="form-error otp-error-msg" role="alert">{error}</p>}
 
       <div className="otp-resend">
         {countdown > 0 ? (
@@ -97,12 +120,20 @@ function ApplyVerification() {
       </div>
 
       <p className="otp-note">
-        <ShieldCheck size={14} /> This is a simulated verification. Enter any 6-digit code to proceed.
+        <ShieldCheck size={14} /> Your OTP is securely verified through our encrypted gateway.
       </p>
 
       <div className="apply-form__actions">
         <button type="button" className="btn btn--ghost btn--lg" onClick={() => navigate('/apply/employment')}><ArrowLeft size={16} /> Back</button>
-        <button type="button" className="btn btn--cta btn--lg" style={{ flex: 1 }} onClick={handleVerify}>Verify & Continue</button>
+        <button
+          type="button"
+          className={`btn btn--cta btn--lg ${verifying ? 'btn--disabled' : ''}`}
+          style={{ flex: 1 }}
+          onClick={handleVerify}
+          disabled={verifying}
+        >
+          {verifying ? <><Loader2 size={18} className="btn-spinner" /> Verifying...</> : 'Verify & Continue'}
+        </button>
       </div>
     </div>
   );

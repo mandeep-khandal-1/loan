@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { lazy } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import RootLayout from './layouts/RootLayout';
 import ApplyLayout from './layouts/ApplyLayout';
 import { LazyPage } from './components/PageLoader';
@@ -60,6 +60,8 @@ export const router = createBrowserRouter([
             path: 'success',
             element: <LazyPage><ProtectedStep step="success"><ApplySuccess /></ProtectedStep></LazyPage>,
           },
+          /* Catch-all: redirect unknown apply sub-routes back to step 1 */
+          { path: '*', element: <Navigate to="/apply" replace /> },
         ],
       },
       { path: '*', element: <LazyPage><NotFoundPage /></LazyPage> },

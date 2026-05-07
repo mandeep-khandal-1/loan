@@ -1,19 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, FileText, ShieldCheck, Users, IndianRupee, Building2, Star } from 'lucide-react';
-import { formatINR } from '../utils/financial';
+import { Zap, FileText, ShieldCheck } from 'lucide-react';
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import { COMPANY } from '../config/company';
 import './Hero.css';
+
+const APPROVAL_TEXTS = [
+  "get approved.",        // English
+  "मंज़ूर होते हैं।",         // Hindi
+  "ਪਾਸ ਹੁੰਦੇ ਨੇ।",            // Punjabi
+  "मंजूर होतात.",          // Marathi
+  "મંજૂર થાય છે.",           // Gujarati
+  "ఆమోదించబడతాయి.",    // Telugu
+  "அனுமதிக்கப்படும்."      // Tamil
+];
 
 function Hero() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     mobile: '',
-    loanAmount: '200000',
-    employmentType: '',
   });
   const [errors, setErrors] = useState({});
+  const [textIndex, setTextIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTextIndex((prev) => (prev + 1) % APPROVAL_TEXTS.length);
+    }, 2500); // Change text every 2.5 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  // Mouse tracking for interactive background
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const smoothX = useSpring(mouseX, { damping: 50, stiffness: 400 });
+  const smoothY = useSpring(mouseY, { damping: 50, stiffness: 400 });
+
+  const handleMouseMove = (e) => {
+    const { currentTarget, clientX, clientY } = e;
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -24,7 +53,6 @@ function Hero() {
     const errs = {};
     if (!formData.fullName.trim()) errs.fullName = 'Full name is required';
     if (!/^[6-9]\d{9}$/.test(formData.mobile)) errs.mobile = 'Enter valid 10-digit mobile';
-    if (!formData.employmentType) errs.employmentType = 'Select your employment type';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -32,75 +60,122 @@ function Hero() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      // Navigate to apply — the apply form will collect this data fresh
-      // We pass minimal non-sensitive data via URL state (NOT sessionStorage)
       navigate('/apply', {
         state: {
           fullName: formData.fullName,
           mobile: formData.mobile,
-          loanAmount: formData.loanAmount,
-          employmentType: formData.employmentType,
         },
       });
     }
   };
 
   return (
-    <section className="hero" id="hero">
+    <section className="hero" id="hero" onMouseMove={handleMouseMove}>
+      {/* Interactive Background */}
+      <div className="hero__grid-bg"></div>
+      <motion.div
+        className="hero__mouse-glow"
+        style={{ x: smoothX, y: smoothY }}
+      />
+      <div className="hero__shapes">
+        <div className="hero__shape hero__shape--1"></div>
+        <div className="hero__shape hero__shape--2"></div>
+        <div className="hero__shape hero__shape--3"></div>
+      </div>
+
       <div className="container hero__inner">
-        <div className="hero__content">
-          <div className="hero__eyebrow">
-            <span className="hero__eyebrow-dot" />
-            Trusted by {COMPANY.stats.customers} Indians
-          </div>
+        <motion.div
+          className="hero__content"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15, delayChildren: 0.1 }
+            }
+          }}
+        >
+          <motion.h1
+            className="hero__title"
+            variants={{
+              hidden: { opacity: 0, x: -30 },
+              visible: { opacity: 1, x: 0, transition: { type: 'spring', damping: 25, stiffness: 100 } }
+            }}
+          >
+            Loans that actually<br />
+            <span className="hero__title--rotator">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={textIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="hero__title--accent"
+                >
+                  {APPROVAL_TEXTS[textIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+          </motion.h1>
 
-          <h1 className="hero__title">
-            Get Instant Personal Loans
-            <span className="hero__title--accent"> up to ₹10 Lakhs</span>
-          </h1>
-
-          <p className="hero__subtitle">
+          <motion.p
+            className="hero__subtitle"
+            variants={{
+              hidden: { opacity: 0, x: -30 },
+              visible: { opacity: 1, x: 0, transition: { type: 'spring', damping: 25, stiffness: 100 } }
+            }}
+          >
             We compare offers from {COMPANY.stats.partners} RBI-registered NBFCs to find you the
             lowest rates. 100% digital. Approval in minutes. Funds same day.
-          </p>
+          </motion.p>
 
-          <div className="hero__badges">
+          <motion.div
+            className="hero__badges"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 100 } }
+            }}
+          >
             <div className="hero__badge-item">
-              <Zap size={15} />
-              <span>10-Min Approval</span>
+              <div className="hero__badge-icon-wrap">
+                <Zap size={20} />
+              </div>
+              <div className="hero__badge-text">
+                <span className="hero__badge-title">10-Minute Approval</span>
+                <span className="hero__badge-desc">AI-powered instant eligibility check</span>
+              </div>
             </div>
             <div className="hero__badge-item">
-              <FileText size={15} />
-              <span>Zero Paperwork</span>
+              <div className="hero__badge-icon-wrap">
+                <FileText size={20} />
+              </div>
+              <div className="hero__badge-text">
+                <span className="hero__badge-title">Zero Paperwork</span>
+                <span className="hero__badge-desc">100% digital with Aadhaar eKYC</span>
+              </div>
             </div>
             <div className="hero__badge-item">
-              <ShieldCheck size={15} />
-              <span>No Hidden Fees</span>
+              <div className="hero__badge-icon-wrap">
+                <ShieldCheck size={20} />
+              </div>
+              <div className="hero__badge-text">
+                <span className="hero__badge-title">No Hidden Fees</span>
+                <span className="hero__badge-desc">Transparent rates, no surprises</span>
+              </div>
             </div>
-          </div>
+          </motion.div>
+        </motion.div>
 
-          <div className="hero__stats">
-            <div className="hero__stat">
-              <span className="hero__stat-val"><Users size={18} /> {COMPANY.stats.customersShort}</span>
-              <span className="hero__stat-label">Customers</span>
-            </div>
-            <div className="hero__stat">
-              <span className="hero__stat-val"><IndianRupee size={18} /> {COMPANY.stats.disbursed.replace('₹', '')}</span>
-              <span className="hero__stat-label">Disbursed</span>
-            </div>
-            <div className="hero__stat">
-              <span className="hero__stat-val"><Building2 size={18} /> {COMPANY.stats.partners}</span>
-              <span className="hero__stat-label">NBFC Partners</span>
-            </div>
-            <div className="hero__stat">
-              <span className="hero__stat-val"><Star size={18} /> {COMPANY.stats.rating}</span>
-              <span className="hero__stat-label">User Rating</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="hero__form-wrap" id="hero-form">
+        <motion.div
+          className="hero__form-wrap" id="hero-form"
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, type: 'spring', damping: 25 }}
+        >
           <form className="hero__form" onSubmit={handleSubmit} id="lead-form" noValidate>
+
             <h2 className="hero__form-title">Check Your Eligibility</h2>
             <p className="hero__form-desc">Get personalized loan offers in 2 minutes</p>
 
@@ -118,7 +193,7 @@ function Hero() {
               {errors.fullName && <span className="form-error" role="alert">{errors.fullName}</span>}
             </div>
 
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: 'var(--sp-2)' }}>
               <label htmlFor="lead-mobile" className="form-label">Mobile Number</label>
               <input
                 id="lead-mobile"
@@ -133,59 +208,15 @@ function Hero() {
               {errors.mobile && <span className="form-error" role="alert">{errors.mobile}</span>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="lead-amount" className="form-label">
-                Loan Amount: <strong>{formatINR(formData.loanAmount)}</strong>
-              </label>
-              <input
-                id="lead-amount"
-                type="range"
-                className="hero__slider"
-                min="10000"
-                max="1000000"
-                step="10000"
-                value={formData.loanAmount}
-                onChange={(e) => handleChange('loanAmount', e.target.value)}
-              />
-              <div className="hero__slider-range">
-                <span>₹10K</span>
-                <span>₹10L</span>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <span className="form-label">Employment Type</span>
-              <div className={`hero__emp-grid ${errors.employmentType ? 'hero__emp-grid--error' : ''}`}>
-                {[
-                  { value: 'salaried', label: 'Salaried', icon: '💼' },
-                  { value: 'self-employed', label: 'Self-Employed', icon: '🏢' },
-                  { value: 'business', label: 'Business', icon: '📊' },
-                  { value: 'freelancer', label: 'Freelancer', icon: '💻' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    className={`hero__emp-card ${formData.employmentType === opt.value ? 'hero__emp-card--active' : ''}`}
-                    onClick={() => handleChange('employmentType', opt.value)}
-                    aria-pressed={formData.employmentType === opt.value}
-                  >
-                    <span className="hero__emp-icon">{opt.icon}</span>
-                    <span className="hero__emp-label">{opt.label}</span>
-                  </button>
-                ))}
-              </div>
-              {errors.employmentType && <span className="form-error" role="alert">{errors.employmentType}</span>}
-            </div>
-
             <button type="submit" className="btn btn--cta btn--lg btn--full" id="lead-submit">
-              Check My Eligibility
+              <ShieldCheck size={18} /> Check My Eligibility
             </button>
 
             <p className="hero__form-safe">
               <ShieldCheck size={13} /> Your information is 100% safe. We never share your data.
             </p>
           </form>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

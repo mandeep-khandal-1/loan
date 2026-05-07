@@ -9,7 +9,14 @@ const schema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
   email: z.string().email('Enter a valid email address'),
   mobile: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit mobile number'),
-  dob: z.string().min(1, 'Date of birth is required'),
+  dob: z.string().min(1, 'Date of birth is required').refine((val) => {
+    const today = new Date();
+    const birth = new Date(val);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age >= 21 && age <= 65;
+  }, 'You must be between 21 and 65 years old to apply'),
   pan: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, 'Enter a valid PAN (e.g., ABCDE1234F)'),
 });
 

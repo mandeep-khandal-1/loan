@@ -3,6 +3,7 @@ import Hero from '../components/Hero';
 import Partners from '../components/Partners';
 import ScrollSteps from '../components/ScrollSteps';
 import LoanProducts from '../components/LoanProducts';
+import StatsBanner from '../components/StatsBanner';
 import EmiCalculator from '../components/EmiCalculator';
 import WhyChooseUs from '../components/WhyChooseUs';
 import Testimonials from '../components/Testimonials';
@@ -21,6 +22,7 @@ function HomePage() {
       </div>
       <Partners />
       <LoanProducts />
+      <StatsBanner />
       <EmiCalculator />
       <WhyChooseUs />
       <Testimonials />

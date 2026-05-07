@@ -36,7 +36,7 @@ function Navbar() {
       <nav className="navbar" id="navbar" role="navigation" aria-label="Main navigation">
         <div className="navbar__inner">
           <Link to="/" className="navbar__brand" id="nav-brand" onClick={close}>
-            <img src="/logo.png" alt="SabkaLoan" className="navbar__logo" width="36" height="36" />
+            <img src="/logo.webp" alt="SabkaLoan" className="navbar__logo" width="36" height="36" />
             <span className="navbar__name">SabkaLoan</span>
           </Link>
 

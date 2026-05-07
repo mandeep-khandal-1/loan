@@ -10,7 +10,7 @@ function Footer() {
         <div className="footer__grid">
           <div className="footer__brand">
             <div className="footer__brand-row">
-              <img src="/logo.png" alt="SabkaLoan" className="footer__logo" width="32" height="32" />
+              <img src="/logo.webp" alt="SabkaLoan" className="footer__logo" width="32" height="32" />
               <span className="footer__name">{COMPANY.name}</span>
             </div>
             <p className="footer__tagline">

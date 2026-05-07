@@ -5,7 +5,9 @@ import './ScrollSteps.css';
 
 /* ── Helper: Animated Number ── */
 function AnimatedNumber({ value, active, format = Math.round, duration = 1.5 }) {
-  const [display, setDisplay] = useState(format(0));
+  const formatRef = useRef(format);
+  formatRef.current = format;
+  const [display, setDisplay] = useState(formatRef.current(0));
   
   useEffect(() => {
     if (active) {
@@ -13,14 +15,14 @@ function AnimatedNumber({ value, active, format = Math.round, duration = 1.5 }) 
         duration,
         ease: "easeOut",
         onUpdate(v) {
-          setDisplay(format(v));
+          setDisplay(formatRef.current(v));
         }
       });
       return () => controls.stop();
     } else {
-      setDisplay(format(0));
+      setDisplay(formatRef.current(0));
     }
-  }, [active, value, format, duration]);
+  }, [active, value, duration]);
 
   return <>{display}</>;
 }
@@ -30,7 +32,7 @@ const stepsData = [
     label: 'Register',
     title: 'Register',
     desc: 'Sign up using your mobile number to register. Quick, simple, and 100% digital.',
-    image: '/step-register.png',
+    image: '/step-register.webp',
     cards: [
       { type: 'orange', title: 'Enter your phone number', body: '9**** 9****', position: 'top-left' },
       { type: 'pink', title: 'Enter OTP', body: 'otp', position: 'bottom-right' },
@@ -40,7 +42,7 @@ const stepsData = [
     label: 'Complete Profile',
     title: 'Complete Profile',
     desc: 'Provide personal, employment, and income information, complete KYC, and upload a selfie.',
-    image: '/step-profile.png',
+    image: '/step-profile.webp',
     cards: [
       { type: 'green', title: 'Verify your account', body: 'Upload your PAN card / Aadhaar card', position: 'top-left', hasCheck: true },
       { type: 'pink', title: 'Upload Picture', body: 'progress', position: 'bottom-right' },
@@ -50,7 +52,7 @@ const stepsData = [
     label: 'Get Loan',
     title: 'Get Loan',
     desc: 'Select the loan amount and tenure, and get the loan credited to your bank within minutes.',
-    image: '/step-funded.png',
+    image: '/step-funded.webp',
     cards: [
       { type: 'pink-white', title: 'Receive Money', body: 'amount', position: 'top-right' },
       { type: 'orange', title: 'Amount details', body: 'Customer ID\nCustomer Account', position: 'bottom-left' },
@@ -152,7 +154,7 @@ function BgShapes({ progress }) {
 
 /* ── Step Label (left side) ── */
 function StepLabel({ step, isActive }) {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(() => isActive.get());
 
   useMotionValueEvent(isActive, "change", (latest) => {
     setActive(latest);
@@ -175,7 +177,7 @@ function StepLabel({ step, isActive }) {
 
 /* ── Step Visual (right side) ── */
 function StepVisual({ step, isActive }) {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(() => isActive.get());
 
   useMotionValueEvent(isActive, "change", (latest) => setActive(latest));
 
@@ -199,7 +201,7 @@ function StepVisual({ step, isActive }) {
 
 /* ── Floating Card ── */
 function FloatingCard({ card, isActive, delay }) {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(() => isActive.get());
   const posClass = `ss-float-card--${card.position}`;
 
   useMotionValueEvent(isActive, "change", (latest) => setActive(latest));

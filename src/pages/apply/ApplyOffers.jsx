@@ -6,15 +6,16 @@ import { calculateEMI, formatINR } from '../../utils/financial';
 import './ApplyFlow.css';
 
 /**
- * Generate realistic loan offers based on user profile.
- * Uses the correct EMI formula from shared utils.
+ * Generate indicative loan offers based on user profile.
+ * NOTE: These are illustrative offers only. Real offers come from the backend
+ * after credit assessment by our NBFC partners.
  */
 const generateOffers = (income, amount) => {
   const amt = Number(amount) || 300000;
   return [
-    { id: 1, lender: 'Bajaj Finserv', rate: 10.49, tenure: 36, fee: '1.5%', color: '#003B71' },
-    { id: 2, lender: 'Tata Capital', rate: 11.25, tenure: 24, fee: '2.0%', color: '#00235B' },
-    { id: 3, lender: 'ICICI Bank', rate: 12.00, tenure: 48, fee: '1.0%', color: '#B02A30' },
+    { id: 1, lender: 'Partner A', rate: 10.49, tenure: 36, fee: '1.5%', color: '#0369a1' },
+    { id: 2, lender: 'Partner B', rate: 11.25, tenure: 24, fee: '2.0%', color: '#4338ca' },
+    { id: 3, lender: 'Partner C', rate: 12.00, tenure: 48, fee: '1.0%', color: '#059669' },
   ].map((offer) => ({
     ...offer,
     emi: Math.round(calculateEMI(amt, offer.rate, offer.tenure)),
@@ -39,7 +40,10 @@ function ApplyOffers() {
   return (
     <div className="apply-form">
       <h2 className="apply-form__title">Your Matched Offers</h2>
-      <p className="apply-form__desc">Based on your profile, here are the best offers from our partners.</p>
+      <p className="apply-form__desc">Based on your profile, here are the best indicative offers from our partners.</p>
+      <p className="apply-form__disclaimer">
+        <em>Rates shown are indicative. Final offer, interest rate, and terms are subject to lender approval and your credit profile.</em>
+      </p>
 
       <div className="offers-list">
         {offers.map((offer) => (

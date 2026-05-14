@@ -1,6 +1,6 @@
 /* ===== Navbar ===== */
 .navbar-wrapper {
-  position: sticky;
+  position: fixed;
   top: 0;
   padding-top: var(--sp-4);
   z-index: 100;
@@ -8,7 +8,6 @@
   display: flex;
   justify-content: center;
   pointer-events: none; /* Let clicks pass through empty sides */
-  margin-bottom: calc(var(--sp-4) * -1); /* Prevent extra space */
 }
 
 .navbar {

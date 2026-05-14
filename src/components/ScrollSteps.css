@@ -395,19 +395,9 @@
    MOBILE
    ══════════════════════════════════ */
 @media (max-width: 768px) {
-  .ss {
-    height: auto;
-  }
-
-  .ss__sticky {
-    position: relative;
-    height: auto;
-    padding: var(--sp-12) 0 var(--sp-16);
-  }
-
   .ss__inner {
     grid-template-columns: 1fr;
-    gap: var(--sp-8);
+    gap: var(--sp-6);
   }
 
   .ss__heading {
@@ -417,32 +407,36 @@
 
   .ss__steps-nav {
     text-align: center;
+    gap: var(--sp-4);
   }
 
   .ss__step-desc {
     max-width: 100%;
+    font-size: var(--text-sm);
   }
 
   .ss__visual-stage {
     width: 100%;
-    max-width: 340px;
-    height: 420px;
+    max-width: 100vw;
+    height: 340px; /* Reduced for mobile */
     margin: 0 auto;
+    overflow: hidden;
   }
 
   .ss__image-wrap {
-    width: 260px;
-    height: 340px;
+    width: 220px;
+    height: 280px;
   }
 
   .ss-float-card {
     animation: none;
-    min-width: 130px;
-    padding: var(--sp-3) var(--sp-4);
+    min-width: 110px;
+    padding: var(--sp-2) var(--sp-3);
+    font-size: 10px;
   }
 
-  .ss-float-card--top-left { left: 0; }
-  .ss-float-card--top-right { right: 0; }
-  .ss-float-card--bottom-left { left: 0; }
-  .ss-float-card--bottom-right { right: 0; }
+  .ss-float-card--top-left { left: 5px; top: 10px; }
+  .ss-float-card--top-right { right: 5px; top: 10px; }
+  .ss-float-card--bottom-left { left: 5px; bottom: 10px; }
+  .ss-float-card--bottom-right { right: 5px; bottom: 10px; }
 }

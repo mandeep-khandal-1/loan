@@ -238,3 +238,36 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
+/* ===== Mobile ===== */
+@media (max-width: 768px) {
+  .apply-layout__right {
+    padding: var(--sp-6) var(--sp-4);
+  }
+  
+  .apply-nav {
+    margin-bottom: var(--sp-6);
+  }
+  
+  .apply-step {
+    min-width: auto;
+  }
+  
+  .apply-step__label {
+    display: none; /* Hide step text on very small screens to fit */
+  }
+  
+  .apply-trust-badges {
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+  }
+  
+  .apply-trust-badge {
+    width: 100px;
+    padding: var(--sp-3);
+  }
+  
+  .apply-trust-title {
+    font-size: var(--text-base);
+  }
+}

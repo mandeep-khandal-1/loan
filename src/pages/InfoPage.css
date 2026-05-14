@@ -4,7 +4,7 @@
 .info-hero {
   background: linear-gradient(135deg, var(--green-950) 0%, var(--green-900) 100%);
   color: var(--white);
-  padding: var(--sp-16) 0;
+  padding: 120px 0 var(--sp-16); /* Increased top padding to clear fixed navbar */
   text-align: center;
 }
 

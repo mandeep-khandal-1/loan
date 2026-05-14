@@ -43,7 +43,6 @@
   100% { transform: translateX(-50%); }
 }
 
-/* ── Card ── */
 .testimonials__card {
   background-color: var(--white);
   border: 1px solid var(--color-border);
@@ -54,6 +53,7 @@
   gap: var(--sp-4);
   box-shadow: var(--shadow-card);
   width: 360px;
+  max-width: 85vw; /* Responsive width */
   flex-shrink: 0;
   transition: box-shadow 0.2s, transform 0.2s;
 }

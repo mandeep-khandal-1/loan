@@ -63,50 +63,32 @@ const stepsData = [
 /* ── Main Component ── */
 function ScrollSteps() {
   const containerRef = useRef(null);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start'],
   });
 
-  /*
-   * Scroll map (0 → 1):
-   *   0.00 – 0.10  → Section scrolls UP into view (entry animation)
-   *   0.10 – 0.25  → Step 1: Register
-   *   0.25 – 0.40  → Step 2: Complete Profile
-   *   0.40 – 0.55  → Step 3: Get Loan
-   *   0.55 – 0.65  → Hold final step
-   *   0.65 – 0.75  → Section scrolls UP out of view (exit animation)
-   *   0.75 – 1.00  → Gone
-   */
-
-  // Entry: fade in + slide up
-  const entryOpacity = useTransform(scrollYProgress, [0.0, 0.05], [0, 1]);
-  const entryY = useTransform(scrollYProgress, [0.0, 0.05], [100, 0]);
-
-  // Quick transitions for less "heavy" scrolling.
-  // In a 400vh container (300vh scrollable):
-  // 0% - 25% (0-75vh): Step 1
-  // 25% - 50% (75-150vh): Step 2
-  // 50% - 100% (150-300vh): Step 3 (Fully visible 150-200vh, then covered by overlay 200-300vh)
+  // Scroll-based step transitions
   const step1Active = useTransform(scrollYProgress, (v) => v < 0.25);
   const step2Active = useTransform(scrollYProgress, (v) => v >= 0.25 && v < 0.50);
   const step3Active = useTransform(scrollYProgress, (v) => v >= 0.50);
 
+  // Entry animations
+  const entryOpacity = useTransform(scrollYProgress, (p) => Math.min(1, p / 0.10));
+  const entryY = useTransform(scrollYProgress, (p) => {
+    if (p < 0.10) return 100 * (1 - p / 0.10);
+    return 0;
+  });
+
   return (
     <section className="ss" id="scroll-steps" ref={containerRef}>
       <div className="ss__sticky">
-        {/* Background shapes with parallax */}
         <BgShapes progress={scrollYProgress} />
 
         <motion.div
           className="container ss__inner"
-          style={{
-            opacity: useTransform(scrollYProgress, (p) => Math.min(1, p / 0.10)),
-            y: useTransform(scrollYProgress, (p) => {
-              if (p < 0.10) return 100 * (1 - p / 0.10);
-              return 0;
-            }),
-          }}
+          style={{ opacity: entryOpacity, y: entryY }}
         >
           {/* ── LEFT SIDE ── */}
           <div className="ss__left">

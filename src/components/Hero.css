@@ -7,8 +7,8 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  min-height: 100vh; /* Fallback */
-  min-height: 100svh; /* Perfect mobile screen sizing without address bar jumps */
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
 }
@@ -103,12 +103,26 @@
 
 .hero__inner {
   display: grid;
-  grid-template-columns: 1fr 500px; /* Increased right column from 420px to 500px */
-  gap: var(--sp-16);
-  align-items: center;
+  grid-template-columns: 1fr 500px;
+  grid-template-rows: auto auto;
+  gap: var(--sp-8) var(--sp-16);
+  align-items: start;
   position: relative;
   z-index: 1;
   width: 100%;
+}
+
+/* Desktop: form spans entire right column */
+.hero__form-wrap {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+
+/* Desktop: badges sit under left content */
+.hero__badges {
+  grid-column: 1;
+  grid-row: 2;
 }
 
 /* ── Left: Content ── */
@@ -451,12 +465,71 @@
 /* ===== Mobile ===== */
 @media (max-width: 768px) {
   .hero {
-    padding: var(--sp-10) 0 var(--sp-12);
+    position: relative;
+    min-height: auto;
+    padding: calc(var(--nav-height) + var(--sp-10)) var(--sp-4) var(--sp-10);
+    align-items: flex-start;
   }
 
   .hero__inner {
+    display: grid;
     grid-template-columns: 1fr;
-    gap: var(--sp-10);
+    grid-template-rows: auto;
+    gap: var(--sp-6);
+  }
+
+  /* Mobile order: content(1) → form(2) → badges(3) */
+  .hero__content { order: 1; }
+  .hero__form-wrap {
+    order: 2;
+    grid-column: auto;
+    grid-row: auto;
+  }
+  
+  .hero-mobile-hide {
+    display: none !important;
+  }
+
+  /* Make badges a single horizontal row on mobile */
+  .hero__badges {
+    order: 3;
+    grid-column: auto;
+    grid-row: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--sp-2);
+    width: 100%;
+    margin-top: var(--sp-4);
+  }
+
+  .hero__badge-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--sp-2);
+    flex: 1;
+  }
+
+  .hero__badge-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+  }
+
+  .hero__badge-icon-wrap svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .hero__badge-title {
+    font-size: 11px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .hero__badge-desc {
+    display: none; /* Hide descriptions on mobile to fit in one line */
   }
 
   .hero__title {
@@ -467,10 +540,6 @@
     font-size: var(--text-base);
   }
 
-  .hero__badges {
-    gap: var(--sp-2);
-  }
-
   .hero__stats {
     gap: var(--sp-5);
   }
@@ -478,15 +547,15 @@
   .hero__stat-val {
     font-size: var(--text-xl);
   }
-  
+
   .hero__form {
     padding: var(--sp-6) var(--sp-5);
   }
-  
+
   .hero__form-title {
     font-size: var(--text-2xl);
   }
-  
+
   .hero-form-cols {
     grid-template-columns: 1fr;
     gap: var(--sp-4);

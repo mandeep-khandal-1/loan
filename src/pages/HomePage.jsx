@@ -20,8 +20,8 @@ function HomePage() {
         <Hero />
         <ScrollSteps />
       </div>
-      <Partners />
       <LoanProducts />
+      <Partners />
       <StatsBanner />
       <EmiCalculator />
       <WhyChooseUs />

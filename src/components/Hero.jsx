@@ -130,42 +130,6 @@ function Hero() {
             We compare offers from {COMPANY.stats.partners} RBI-registered NBFCs to find you the
             lowest rates. 100% digital. Approval in minutes. Funds same day.
           </motion.p>
-
-          <motion.div
-            className="hero__badges"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 100 } }
-            }}
-          >
-            <div className="hero__badge-item">
-              <div className="hero__badge-icon-wrap">
-                <Zap size={20} />
-              </div>
-              <div className="hero__badge-text">
-                <span className="hero__badge-title">10-Minute Approval</span>
-                <span className="hero__badge-desc">AI-powered instant eligibility check</span>
-              </div>
-            </div>
-            <div className="hero__badge-item">
-              <div className="hero__badge-icon-wrap">
-                <FileText size={20} />
-              </div>
-              <div className="hero__badge-text">
-                <span className="hero__badge-title">Zero Paperwork</span>
-                <span className="hero__badge-desc">100% digital with Aadhaar eKYC</span>
-              </div>
-            </div>
-            <div className="hero__badge-item">
-              <div className="hero__badge-icon-wrap">
-                <ShieldCheck size={20} />
-              </div>
-              <div className="hero__badge-text">
-                <span className="hero__badge-title">No Hidden Fees</span>
-                <span className="hero__badge-desc">Transparent rates, no surprises</span>
-              </div>
-            </div>
-          </motion.div>
         </motion.div>
 
         <motion.div
@@ -179,7 +143,7 @@ function Hero() {
             <h2 className="hero__form-title">Check Your Eligibility</h2>
             <p className="hero__form-desc">Get personalized loan offers in 2 minutes</p>
 
-            <div className="form-group">
+            <div className="form-group hero-mobile-hide">
               <label htmlFor="lead-name" className="form-label">Full Name</label>
               <input
                 id="lead-name"
@@ -216,6 +180,42 @@ function Hero() {
               <ShieldCheck size={13} /> Your information is 100% safe. We never share your data.
             </p>
           </form>
+        </motion.div>
+
+        {/* Badges — separate grid child for mobile reordering */}
+        <motion.div
+          className="hero__badges"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6, type: 'spring', damping: 25 }}
+        >
+          <div className="hero__badge-item">
+            <div className="hero__badge-icon-wrap">
+              <Zap size={20} />
+            </div>
+            <div className="hero__badge-text">
+              <span className="hero__badge-title">10-Minute Approval</span>
+              <span className="hero__badge-desc">AI-powered instant eligibility check</span>
+            </div>
+          </div>
+          <div className="hero__badge-item">
+            <div className="hero__badge-icon-wrap">
+              <FileText size={20} />
+            </div>
+            <div className="hero__badge-text">
+              <span className="hero__badge-title">Zero Paperwork</span>
+              <span className="hero__badge-desc">100% digital with Aadhaar eKYC</span>
+            </div>
+          </div>
+          <div className="hero__badge-item">
+            <div className="hero__badge-icon-wrap">
+              <ShieldCheck size={20} />
+            </div>
+            <div className="hero__badge-text">
+              <span className="hero__badge-title">No Hidden Fees</span>
+              <span className="hero__badge-desc">Transparent rates, no surprises</span>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
